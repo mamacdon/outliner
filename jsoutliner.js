@@ -1,7 +1,8 @@
 /*jslint debug:true*/
 /*global console define*/
-define(["parse-js/parse-js", "transformjs"], function(mParseJs, mTransformJs) {
-
+define(["uglify-js", "lib/transformjs/lib/transformjs"], function(mUglifyJs, mTransformJs) {
+var parser = mUglifyJs.parser;
+	
 var Func = (function() {
 	function Func(node, name) {
 		this.name = this.findName(node);
@@ -125,7 +126,8 @@ function toFunctionTree(/**Array*/ast) {
 	return toplevel;
 }
 
-function toOutlineModel(functionTree, isTop) {
+// Converts Func to the outline model required by Orion outline renderer
+function toOutlineModel(/**Func*/ functionTree, isTop) {
 	isTop = typeof isTop === "undefined" ? true : false;
 	var name = functionTree.name || "function",
 	    args = functionTree.args ? functionTree.args.join(", ") : "",
@@ -156,7 +158,7 @@ mJsOutline.outlineService = {
 		    tree,
 		    end;
 		try {
-			var ast = mParseJs.parse(buffer, false, true /*give tokens*/);
+			var ast = parser.parse(buffer, false, true /*give tokens*/);
 			tree = toFunctionTree(ast);
 			end = +new Date() - start;
 			console.dir(end);
@@ -172,7 +174,7 @@ mJsOutline.validationService = {
 	checkSyntax: function(title, buffer) {
 		var errors = [];
 		try {
-			mParseJs.parse(buffer, true /*strict*/, true /*give tokens*/);
+			parser.parse(buffer, true /*strict*/, true /*give tokens*/);
 		} catch (e) {
 			errors.push({
 				reason: e.message,

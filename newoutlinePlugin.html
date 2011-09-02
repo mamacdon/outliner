@@ -2,12 +2,24 @@
 <html>
 <head>
 <title>JS Outliner</title>
-<script src="plugin.js"></script>
-<script src="require.js"></script>
-<script src="jslintworker.js"></script>	<!-- TEMP -->
+<script src="lib/plugin.js"></script>
+<script src="lib/require.js"></script>
+
 <script>
 /*jslint browser:true*/
 /*global require*/
+require({
+	packages: [
+		{	name: "dandy",
+			location: "lib/dandy",
+			main: "dandy"
+		},
+		{	name: "uglify-js",
+			location: "lib/UglifyJS",
+			main: "uglify-js"
+		}
+	]
+});
 
 require(["jsoutliner"], function(mJsOutline) {
 	require.ready(function() {
@@ -43,6 +55,7 @@ require(["jsoutliner"], function(mJsOutline) {
 	}
 });
 </script>
+<script src="lib/jslintworker.js"></script>	<!-- TEMP -->
 </head>
 <body>New outliner for JavaScript</body>
 </html>
