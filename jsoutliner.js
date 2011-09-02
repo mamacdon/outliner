@@ -1,6 +1,6 @@
 /*jslint debug:true*/
 /*global console define*/
-define(["uglify-js", "lib/transformjs/lib/transformjs"], function(mUglifyJs, mTransformJs) {
+define(["uglify-js", "transformjs"], function(mUglifyJs, mTransformJs) {
 var parser = mUglifyJs.parser;
 	
 var Func = (function() {
