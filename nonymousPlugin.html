@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>JS Outliner based on Function-Object Consumption from the "Nonymous" Github project</title>
+<script src="lib/plugin.js"></script>
+<script src="lib/require.js"></script>
+
+<script>
+/*jslint browser:true*/
+/*global require*/
+require({
+	packages: [
+		{	name: "uglify-js",
+			location: "lib/UglifyJS",
+			main: "uglify-js"
+		}
+	]
+});
+
+require(["nonymousOutliner.js"], function(mNonymousOutliner) {
+	require.ready(function() {
+		register();
+	});
+
+	function register() {
+		var provider = new eclipse.PluginProvider();
+		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
+			mNonymousOutliner.outlineService,
+			{	name: "JavaScript structural outline",
+				pattern: "\\.js$"
+			});
+		
+		// parse-js validation is not currently used since its errors are less helpful than jslint's
+//		provider.registerServiceProvider("orion.edit.validator",
+//			mNonymousOutliner.validationService,
+//			{	pattern: "\\.js$"
+//			});
+		
+		// TEMP: Register jslint for validation -- so that this plugin can be used as a drop-in replacement for jslintPlugin
+		provider.registerServiceProvider("orion.edit.validator", {
+			checkSyntax: function(title, contents) {
+				JSLINT(contents, {white: false, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: false, regexp: true, newcap: true, immed: true, strict: false});
+				return JSLINT.data();
+			}
+		}, {
+			pattern: "\\.js$"
+		});
+		// END TEMP
+		
+		provider.connect(
+		  function callback(){
+		    console.log("Nonymous Plugin Connected");
+		  },
+		  function errback() {
+		    console.log("Nonymous Plugin Error: ", arguments);
+		  }
+		);
+	}
+});
+</script>
+<script src="lib/jslintworker.js"></script>	<!-- TEMP -->
+</head>
+<body>Nonymous - Orion outliner for JavaScript</body>
+</html>
