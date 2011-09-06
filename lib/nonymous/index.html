@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>Uglifoc: Uglify Implementation of Function-Object Consumption Naming </title>
+<script type="text/javascript">
+var loadAndTest = {
+        
+  okStatus: (window.location.protocol === 'file:') ? 0 : 200,
+  request: function(url, infos) {
+    var req = new XMLHttpRequest();
+    req.open("GET", url, true);
+    req.onreadystatechange = this.awaitResponse(url, infos);
+    req.send(); // async
+  },
+
+  awaitResponse: function(url, infos) {
+    return function(event) {
+      // |this| is request object
+      if (this.readyState === 4) {
+        if(this.status === loadAndTest.okStatus) {
+          if (this.response != null) {
+            if (infos) {
+              console.groupCollapsed(url);
+              loadAndTest.checkNames(url, this.response, infos);
+              console.groupEnd();
+            } else {
+              loadAndTest.reportNames(url, this.response);  
+            }
+          } else {
+            console.error("Server returned 200 ok, but it gave no response object");          
+          }
+        } else {
+          console.error("Server error "+this.status, this, event);
+        }
+      } // else wait for another call
+    }
+  },
+  
+  getNameInfosFromSource: function(src) {
+    // We parse the JavaScript ...
+    var ast = exports.parse(src, false, ".loc");
+    
+    // and search the resulting syntax tree for function body nodes.
+    var infos = Uglifoc.FunctionNamer.getNames(ast);
+    return infos;
+  },
+  
+  checkNames: function(url, src, infosToCheck) {
+    var infos = loadAndTest.getNameInfosFromSource(src);
+    var pass = 0;
+    var fail = 0;
+    var lesser = (infos.length > infosToCheck.length) ? infosToCheck.length : infos.length;
+    for (var i = 0; i < lesser; i++) {
+      var name = loadAndTest.formName(url, infos[i]);
+      if (name === infosToCheck[i]) {
+        pass++;
+      } else {
+        fail++;
+        console.log(infosToCheck[i]+" !== "+name);
+      }
+    }
+    for (; i < infosToCheck.length; i++) {
+      fail++;
+      console.log("missing "+infosToCheck[i])
+    }
+    if (infos.length > infosToCheck.length) {
+      for (var i = infosToCheck.length; i < infos.length; i++) {
+        fail++;
+        var name = loadAndTest.formName(url, infos[i]);
+        console.log("extra "+name);
+      }
+    }
+    console.log(url+" Pass: "+pass+(fail?" Fail: "+fail:""));
+  },
+  
+  formName: function(url, info) {
+    return url+"@"+info.line+"."+info.col+": "+info.name
+  },
+  
+  reportNames: function(url, src) {
+    console.log("testOne "+url, src);
+    var infos = loadAndTest.getNameInfosFromSource(src);
+    for (var i = 0; i < infos.length; i++) {
+      var name = infos[i];
+      console.log(loadAndTest.formName(url, name));
+    }
+    
+  },
+};
+
+var exports = {};
+
+window.addEventListener('load', function testAll() {
+
+  for(var i = 0; i < tests.length; i++) {
+    var aScript = tests[i];
+    loadAndTest.request(aScript.url, aScript.functions);
+  }
+
+}, false);
+
+function require(module) {
+  if (!window.module)
+    console.log(module+" module is required");
+}
+</script>
+<script type="text/javascript" src="UglifyJS/lib/parse-js.js"></script>
+<script type="text/javascript" src="foc.js"></script>
+
+<script>
+var tests = [
+  { url: "tests/ObjectPropertyInitializer.js", 
+    functions:[
+      "tests/ObjectPropertyInitializer.js@5.32: aPropertyInitialized", 
+    ]
+  },            
+  {
+   url: "tests/paperFigure1.js", 
+   functions: [
+     "tests/paperFigure1.js@0.21: main",
+     "tests/paperFigure1.js@2.14: foo<",
+     "tests/paperFigure1.js@9.20: Foo<",
+     "tests/paperFigure1.js@11.19: Foo",
+     "tests/paperFigure1.js@16.26: Bar",
+    ],
+  }, 
+  { url: "tests/assignments.js", 
+    functions:[
+      "tests/assignments.js@3.12: x",
+      "tests/assignments.js@6.57: x<onFoo",
+      "tests/assignments.js@9.44: x",
+      "tests/assignments.js@12.33: addEventListener(load-fals)"
+    ]
+  },            
+  
+
+];
+</script>
+</head>
+<body>
+<h1>Function-Object Consumption naming algorithm implementation in Uglify</h1>
+<p>
+Splash Wavefront 2011 Paper:
+<a href="http://code.google.com/p/querypoint-debugging/downloads/detail?name=NamingJSFunctions.pdf">
+Naming Anonymous JavaScript Functions
+</a>, by Salman Mirghasemi,  John J. Barton, and Prof. Claude Petitpierre
+</p>
+<ul id='tree'></ul>
+</body>
+</html>
