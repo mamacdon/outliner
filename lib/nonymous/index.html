@@ -40,7 +40,7 @@ var loadAndTest = {
     var ast = exports.parse(src, false, ".loc");
     
     // and search the resulting syntax tree for function body nodes.
-    var infos = Uglifoc.FunctionNamer.getNames(ast);
+    var infos = Nonymous.getNames(ast);
     return infos;
   },
   
