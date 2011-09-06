@@ -6,7 +6,7 @@ http://code.google.com/p/querypoint-debugging/downloads/detail?name=NamingJSFunc
     var ast = exports.parse(src, false, ".loc");
     
     // and search the resulting syntax tree for function body nodes.
-    var infos = Uglifoc.FunctionNamer.getNames(ast);
+    var infos = Nonymous.FunctionNamer.getNames(ast);
 
 The result is an array of {name: string, line: number, col: number}.
 
