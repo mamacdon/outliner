@@ -4,37 +4,6 @@
 <script type="text/javascript">
 var loadAndTest = {
         
-  okStatus: (window.location.protocol === 'file:') ? 0 : 200,
-  request: function(url, infos) {
-    var req = new XMLHttpRequest();
-    req.open("GET", url, true);
-    req.onreadystatechange = this.awaitResponse(url, infos);
-    req.send(); // async
-  },
-
-  awaitResponse: function(url, infos) {
-    return function(event) {
-      // |this| is request object
-      if (this.readyState === 4) {
-        if(this.status === loadAndTest.okStatus) {
-          if (this.response != null) {
-            if (infos) {
-              console.groupCollapsed(url);
-              loadAndTest.checkNames(url, this.response, infos);
-              console.groupEnd();
-            } else {
-              loadAndTest.reportNames(url, this.response);  
-            }
-          } else {
-            console.error("Server returned 200 ok, but it gave no response object");          
-          }
-        } else {
-          console.error("Server error "+this.status, this, event);
-        }
-      } // else wait for another call
-    }
-  },
-  
   getNameInfosFromSource: function(src) {
     // We parse the JavaScript ...
     var ast = exports.parse(src, false, ".loc");
@@ -78,22 +47,35 @@ var loadAndTest = {
   
   reportNames: function(url, src) {
     console.log("testOne "+url, src);
+    var srcLines = src.split('\n');
+    var output = new Array(srcLines.length);
     var infos = loadAndTest.getNameInfosFromSource(src);
     for (var i = 0; i < infos.length; i++) {
-      var name = infos[i];
-      console.log(loadAndTest.formName(url, name));
+      var info = infos[i];
+      output[info.line] = info.name;
     }
-    
+    return output.join('\n');
+  },
+  
+  analyzeOne: function(input) {
+    var aScript = input.textContent;
+    return this.reportNames(input.id, input.textContent);
   },
 };
 
 var exports = {};
 
 window.addEventListener('load', function testAll() {
-
+  var outputs = document.getElementsByClassName('output');
+  var tests = document.getElementsByClassName('input');
   for(var i = 0; i < tests.length; i++) {
-    var aScript = tests[i];
-    loadAndTest.request(aScript.url, aScript.functions);
+    var test = tests[i];
+    var output = outputs[i];
+    function analyzeRow() {
+      output.textContent = loadAndTest.analyzeOne(test);  
+    }
+    test.addEventListener('click', analyzeRow, true);
+    analyzeRow();
   }
 
 }, false);
@@ -106,35 +88,21 @@ function require(module) {
 <script type="text/javascript" src="UglifyJS/lib/parse-js.js"></script>
 <script type="text/javascript" src="nonymous.js"></script>
 
-<script>
-var tests = [
-  { url: "tests/ObjectPropertyInitializer.js", 
-    functions:[
-      "tests/ObjectPropertyInitializer.js@5.32: aPropertyInitialized", 
-    ]
-  },            
-  {
-   url: "tests/paperFigure1.js", 
-   functions: [
-     "tests/paperFigure1.js@0.21: main",
-     "tests/paperFigure1.js@2.14: foo<",
-     "tests/paperFigure1.js@9.20: Foo<",
-     "tests/paperFigure1.js@11.19: Foo",
-     "tests/paperFigure1.js@16.26: Bar",
-    ],
-  }, 
-  { url: "tests/assignments.js", 
-    functions:[
-      "tests/assignments.js@3.12: x",
-      "tests/assignments.js@6.57: x<onFoo",
-      "tests/assignments.js@9.44: x",
-      "tests/assignments.js@12.33: addEventListener(load-fals)"
-    ]
-  },            
-  
-
-];
-</script>
+<style>
+body {
+  font-family:Verdana,Geneva,sans-serif;
+}
+table {
+  border-collapse:collapse;
+}
+table, th, td {
+  border: 1px solid gray;
+  padding: 7px;
+}
+.output {
+  text-align: right;
+}
+</style>
 </head>
 <body>
 <h1>Nonymous: Function-Object Consumption Naming algorithm implementation</h1>
@@ -144,6 +112,83 @@ Splash Wavefront 2011 Paper:
 Naming Anonymous JavaScript Functions
 </a>, by Salman Mirghasemi,  John J. Barton, and Prof. Claude Petitpierre
 </p>
-<ul id='tree'></ul>
+<table>
+<tbody>
+<tr><th>Naming Algorithm Results</th><th>Input Source</th></tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="paperFig1">
+  var main = function() {             // 1. main
+   var foo = new Foo(
+      function(){                     // 2. main/foo<
+        this.welcome = "Hi!";
+      });
+   var bar = new Bar("GoodBye.");
+   console.log(foo.welcome);
+   console.log(bar.message);
+  };
+  var Foo = function(){               // 3. Foo<
+    var instances;
+    return function(initializer){     // 4. Foo
+        instances++;
+        initializer.apply(this);
+      };
+  }();
+  var Baz = Bar = function(msg){      // 5. Bar
+    this.message = msg;
+  }
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="objects">
+  // Case 1: Object Property Initializer
+
+var anObject = {
+  aPropertyInitialized: function() {
+    return true;
+  }
+};
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="assignment">
+var x = 1;
+x = function(){};                                                 // x
+
+x = window.addEventListener("something", {onFoo: function(){}});  // x&lt;onFoo
+
+x = window.addEventListener('load', function(event) {}, false);   // x&lt;(load-fal)
+
+addEventListener('load', function(event) {}, false);  // addEventListener(load-fals);
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="define">
+define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous) {
+});
+</pre>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </body>
 </html>
