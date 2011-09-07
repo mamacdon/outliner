@@ -60,5 +60,21 @@ require(["nonymousOutliner.js"], function(mNonymousOutliner) {
 </script>
 <script src="lib/jslintworker.js"></script>	<!-- TEMP -->
 </head>
-<body>Nonymous - Orion outliner for JavaScript</body>
+<body>
+<h1>Nonymous - Orion outliner for JavaScript</h1>
+<ol>
+<li>This plugin requires Orion 0.3m2 or greater!</li>
+<li>Open the file org.eclipse.orion.client.core/web/defaults.pref and comment out this line:<br>
+<pre>
+"/plugins/jslintPlugin.html":true,
+</pre>
+Then reload <a href="http://localhost:8080/defaults.pref">http://localhost:8080/defaults.pref</a> in your browser to make sure it's not cached.
+
+(This is a workaround for Orion Bug 355895.)
+
+<li>Log in to Orion, go to the Plugins page, and uninstall jslintPlugin.html.</li>
+
+<li>Paste the URL for this page and click Install. You should see a success message.</li>
+</ul>
+</body>
 </html>
