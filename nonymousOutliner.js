@@ -31,7 +31,7 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
 		}
 		if (ast) {
 		  try {
-			var infos = mNonymous.getNames(ast);
+			var infos = mNonymous.getNames(ast, mJsOutline.debug);
 			var end = +new Date() - start;
 			console.dir(end);
 			return toOutlineModel(infos);

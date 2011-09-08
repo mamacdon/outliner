@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>JS Outliner based on Function-Object Consumption from the "Nonymous" Github project</title>
+<title>Nonymous for Orion: JS Outliner based on Function-Object Consumption from the "Nonymous" Github project</title>
 <script src="lib/plugin.js"></script>
 <script src="lib/require.js"></script>
 
@@ -21,6 +21,13 @@ require(["nonymousOutliner.js"], function(mNonymousOutliner) {
 	require.ready(function() {
 		register();
 	});
+
+    var urlParams = window.location.toString().split('?')[1];
+    if (typeof urlParams === 'string') {
+      var debugParam = urlParams.indexOf('debug=');
+      var debugValue = urlParams.substr(debugParam+'debug='.length);
+      mNonymousOutliner.debug = debugValue;
+    }
 
 	function register() {
 		var provider = new eclipse.PluginProvider();
@@ -76,5 +83,13 @@ Then reload <a href="http://localhost:8080/defaults.pref">http://localhost:8080/
 
 <li>Paste the URL for this page and click Install. You should see a success message.</li>
 </ul>
+<p>To enable error logging add "debug=true" to the end of the plugin URL</p>
+<p>To enable full trace debugging add "debug=trace" to the end of the plugin URL</p>
+
+<p>To report problems or make suggestions:
+<ol>
+<li><a href="https://github.com/johnjbarton/outliner/issues">Report an issue via github</a>, or </li>
+<li><a href="mailto:johnjbarton@johnjbarton.com">email me</a></li>
+</ol>
 </body>
 </html>

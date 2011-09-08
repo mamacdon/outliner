@@ -9,7 +9,7 @@ var loadAndTest = {
     var ast = exports.parse(src, false, ".loc");
     
     // and search the resulting syntax tree for function body nodes.
-    var infos = Nonymous.getNames(ast);
+    var infos = Nonymous.getNames(ast, true);
     return infos;
   },
   
