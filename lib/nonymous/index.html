@@ -66,15 +66,19 @@ var loadAndTest = {
 var exports = {};
 
 window.addEventListener('load', function testAll() {
-  var outputs = document.getElementsByClassName('output');
-  var tests = document.getElementsByClassName('input');
-  for(var i = 0; i < tests.length; i++) {
-    var test = tests[i];
-    var output = outputs[i];
-    function analyzeRow() {
-      output.textContent = loadAndTest.analyzeOne(test);  
+    function analyzer(input, output) {
+      return function(event) {
+        output.textContent = loadAndTest.analyzeOne(input);  
+      }
     }
-    test.addEventListener('click', analyzeRow, true);
+
+  var outputs = document.getElementsByClassName('output');
+  var inputs = document.getElementsByClassName('input');
+  for(var i = 0; i < inputs.length; i++) {
+    var input = inputs[i];
+    var output = outputs[i];
+    var analyzeRow = analyzer(input, output);
+    input.addEventListener('click', analyzeRow, true);
     analyzeRow();
   }
 
@@ -156,6 +160,12 @@ var anObject = {
     return true;
   }
 };
+function Fuz(){};
+Fuz.prototype = {
+  add: function(child) {
+    this.children.push(child);
+  },
+}
 </pre>
 </td>
 </tr>
