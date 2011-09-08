@@ -187,6 +187,23 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
 </pre>
 </td>
 </tr>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="named">
+// Some named functions that we should be finding the names of...
+function foo() {
+  return 1;
+}
+var bar = function bax() {
+  return 2;
+}
+</pre>
+</td>
+</tr>
 </tbody>
 </table>
 </div>
