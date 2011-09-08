@@ -221,13 +221,26 @@ var bar = function bax() {
   <td>
 <pre class="input" id="callNoAssign">
 // nested function call with no assignment
-function outer() {
+function callNoAssign() {
   this.fileClient.fetchChildren(parentItem.ChildrenLocation).then( 
 				dojo.hitch(this, function(children) {
 					mUtil.processNavigatorParent(parentItem, children);
 					onComplete(children);
 				})
 			);
+}
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="otherArgAlsoFunction">
+// function in argument with another function argument
+function otherArgAlsoFunction() {
+  this._convertDelimiter(text, function(t) {clipboadText.push(t);}, function() {clipboadText.push(delimiter);});
 }
 </pre>
 </td>
