@@ -2,23 +2,46 @@ Outliner is an improved outline view for the Orion JavaScript editor. It uses Ug
 build an abstract syntax tree of your JavaScript code, then constructs a tree of your functions. A few
 simple heuristics are used to infer the names of anonymous functions.
 
-Installing onto your local Orion server
----------------------------------------
-1.  Clone the outliner repo from Github.
-2.  Host the outliner code on a web server somewhere. For bonus points, you can [host it right from your Orion workspace](http://wiki.eclipse.org/Orion/How_Tos/Setup_Orion_Client_Hosted_Site_on_OrionHub).
-3.  Open the file ``` org.eclipse.orion.client.core/web/defaults.pref``` and comment out this line:
+Installing onto local Orion server
+----------------------------------
+1. Browse to ```[your orion directory]/eclipse/plugins/org.eclipse.orion.client.core_0.2.0.vXXXXXXXX-XXXX/web```.
+2. Open the file ```defaults.pref``` and change this line:
 
         "/plugins/jslintPlugin.html":true,
-    Then reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
+   to
 
-    (This is a workaround for [Orion Bug 355895](https://bugs.eclipse.org/bugs/show_bug.cgi?id=355895).)
-4. Log in to Orion, go to the Plugins page, and uninstall ```jslintPlugin.html```.
-5. Paste the URL where you're hosting ```newoutlinePlugin.html``` into the box and click Install.
-   You should see a success message.
+        // "/plugins/jslintPlugin.html":true,
+3. Launch your Orion server (if it's not already running), and reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
+4. Log in to your Orion server, go to the Plugins page, and uninstall ```jslintPlugin.html```.
+5. Paste ```http://mamacdon.github.com/outliner/newoutlinePlugin.html``` into the box and click Install.
+   After a moment, you should see a success message.
 6. Open a JavaScript file in the Orion editor. You'll see the outline tree in the left-hand pane.
 
-To uninstall, uncomment the line from Step 3, and uninstall the plugin from Step 5.
+<!-- The first 3 steps are a workaround for [Orion Bug 355895](https://bugs.eclipse.org/bugs/show_bug.cgi?id=355895). -->
+<!-- 
+Installing onto orionhub
+------------------------
+We can use Orionhub to simulate a local Orion server. We'll install the Outliner plugin into our "simulated" server.
+1. Log into Orionhub.
+2. Go to the Repositories page and clone the Orion client repository:
+        git://git.eclipse.org/gitroot/orion/org.eclipse.orion.client.git
+3. Go to the Sites page and create a new site configuration.
+4. *While holding the SHIFT key*, click the Add button and choose ```org.eclipse.orion.client``` from the list.
+   This should create a number of entries in the table.
+5. Click *Start* to launch the site. Note the URL where the site is running; this is now your "local server".
+6. Go to the Navigator and browse to ```org.eclipse.orion.client/bundles/org.eclipse.orion.client.core/web```.
+7. Follow the instructions in "Installing" above, starting from Step 2.
+-->
+
+Uninstalling
+------------
+1. Open ```defaults.pref``` and uncomment the jslintPlugin line.
+2. Uninstall ```newoutlinePlugin.html```.
 
 Requirements
----------------------------------------
+------------
 * Orion 0.3 pre-M2 (any build newer than 08/28 will work)
+
+License
+-------
+[Eclipse Distribution License v 1.0](http://www.eclipse.org/org/documents/edl-v10.html)
