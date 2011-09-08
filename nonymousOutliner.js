@@ -22,19 +22,26 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
   var mJsOutline = {};
   mJsOutline.outlineService = {
 	getOutline: function(buffer, title) {
-		var start = +new Date(),
-		    infos,
-		    end;
+		var start = +new Date();
+		var ast;
 		try {
-			var ast = parser.parse(buffer, false, true /*give tokens*/);
-			infos = mNonymous.getNames(ast);
-			end = +new Date() - start;
-			console.dir(end);
+			ast = parser.parse(buffer, false, true /*give tokens*/);
 		} catch (e) {
 			console.debug("Error parsing file: " + e);
-			return [/* TODO can we get a partial result, as with jslint? */];
 		}
-		return toOutlineModel(infos);
+		if (ast) {
+		  try {
+			var infos = mNonymous.getNames(ast);
+			var end = +new Date() - start;
+			console.dir(end);
+			return toOutlineModel(infos);
+	      } catch (exc) {
+	        console.error("Error getting names from ast "+exc, exc.stack);
+	        // bogus console.exception(exc);
+	        console.error(exc);
+			return [];
+		  }
+		}
 	}
   };
   return mJsOutline;
