@@ -22,7 +22,7 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
   var mJsOutline = {};
   mJsOutline.outlineService = {
 	getOutline: function(buffer, title) {
-		var start = +new Date();
+		var startTime = +new Date();
 		var ast;
 		try {
 			ast = parser.parse(buffer, false, true /*give tokens*/);
@@ -30,10 +30,14 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
 			console.debug("Error parsing file: " + e);
 		}
 		if (ast) {
+		  var parsedTime = +new Date(); 
 		  try {
 			var infos = mNonymous.getNames(ast, mJsOutline.debug);
-			var end = +new Date() - start;
-			console.dir(end);
+			var endTime = +(new Date());
+			var deltaParse = (parsedTime - startTime);
+			var deltaNaming = (endTime - parsedTime);
+			var relative = Math.round( 100 * deltaNaming / (deltaNaming+deltaParse) );
+			console.info("Nonymous: uglify parse: "+deltaParse+"ms, naming: "+deltaNaming+"ms "+ relative+"%");
 			return toOutlineModel(infos);
 	      } catch (exc) {
 	        console.error("Error getting names from ast "+exc, exc.stack);
