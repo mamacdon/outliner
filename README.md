@@ -4,7 +4,7 @@ simple heuristics are used to infer the names of anonymous functions.
 
 Installing onto local Orion server
 ----------------------------------
-1. Browse to ```[your orion directory]/eclipse/plugins/org.eclipse.orion.client.core_0.2.0.vXXXXXXXX-XXXX/web```.
+1. Browse to ```[your orion directory]/eclipse/plugins/org.eclipse.orion.client.core_0.2.0.vXXXXXXXX-XXXX/web/```.
 2. Open the file ```defaults.pref``` and change this line:
 
         "/plugins/jslintPlugin.html":true,
@@ -13,7 +13,7 @@ Installing onto local Orion server
         // "/plugins/jslintPlugin.html":true,
 3. Launch your Orion server (if it's not already running), and reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
 4. Log in to your Orion server, go to the Plugins page, and uninstall ```jslintPlugin.html```.
-5. Paste ```http://mamacdon.github.com/outliner/newoutlinePlugin.html``` into the box and click Install.
+5. Paste [http://mamacdon.github.com/outliner/newoutlinePlugin.html](http://mamacdon.github.com/outliner/newoutlinePlugin.html) into the box and click Install.
    After a moment, you should see a success message.
 6. Open a JavaScript file in the Orion editor. You'll see the outline tree in the left-hand pane.
 
