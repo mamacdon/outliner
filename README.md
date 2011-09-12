@@ -13,7 +13,7 @@ Installing onto local Orion server
         // "/plugins/jslintPlugin.html":true,
 3. Launch your Orion server (if it's not already running), and reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
 4. Log in to your Orion server, go to the Plugins page, and uninstall ```jslintPlugin.html```.
-5. Paste [http://mamacdon.github.com/outliner/newoutlinePlugin.html](http://mamacdon.github.com/outliner/newoutlinePlugin.html) into the box and click Install.
+5. Paste [http://mamacdon.github.com/outliner/outlinerPlugin.html](http://mamacdon.github.com/outliner/outlinerPlugin.html) into the box and click Install.
    After a moment, you should see a success message.
 6. Open a JavaScript file in the Orion editor. You'll see the outline tree in the left-hand pane.
 
@@ -36,7 +36,7 @@ We can use Orionhub to simulate a local Orion server. We'll install the Outliner
 Uninstalling
 ------------
 1. Open ```defaults.pref``` and uncomment the jslintPlugin line.
-2. Uninstall ```newoutlinePlugin.html```.
+2. Uninstall ```outlinerPlugin.html```.
 
 Requirements
 ------------
