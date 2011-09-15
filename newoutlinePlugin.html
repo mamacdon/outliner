@@ -41,17 +41,6 @@ require(["jsoutliner"], function(mJsOutline) {
 //			{	pattern: "\\.js$"
 //			});
 		
-		// TEMP: Register jslint for validation -- so that this plugin can be used as a drop-in replacement for jslintPlugin
-		provider.registerServiceProvider("orion.edit.validator", {
-			checkSyntax: function(title, contents) {
-				JSLINT(contents, {white: false, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: false, regexp: true, newcap: true, immed: true, strict: false});
-				return JSLINT.data();
-			}
-		}, {
-			pattern: "\\.js$"
-		});
-		// END TEMP
-		
 		provider.connect();
 	}
 });
