@@ -31,7 +31,7 @@ require(["jsoutliner"], function(mJsOutline) {
 		var provider = new eclipse.PluginProvider();
 		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
 			mJsOutline.outlineService,
-			{	name: "JavaScript structural outline",
+			{	name: "Hierarchical outline",
 				pattern: "\\.js$"
 			});
 		
@@ -45,7 +45,6 @@ require(["jsoutliner"], function(mJsOutline) {
 	}
 });
 </script>
-<script src="lib/jslintworker.js"></script>	<!-- TEMP -->
 </head>
 <body>New outliner for JavaScript</body>
 </html>
