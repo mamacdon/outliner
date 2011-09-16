@@ -1,24 +1,16 @@
-Outliner is an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to
-build an abstract syntax tree of your JavaScript code, then constructs a tree of your functions. A few
-simple heuristics are used to infer the names of anonymous functions.
+Outliner provides an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to build
+an abstract syntax tree of your JavaScript code, then constructs a hierarchical visualization of your functions.
+A few simple heuristics are used to infer the names of anonymous functions.
 
-Installing onto local Orion server
-----------------------------------
-1. Browse to ```[your orion directory]/eclipse/plugins/org.eclipse.orion.client.core_0.2.0.vXXXXXXXX-XXXX/web/```.
-2. Open the file ```defaults.pref``` and change this line:
-
-        "/plugins/jslintPlugin.html":true,
-   to
-
-        // "/plugins/jslintPlugin.html":true,
-3. Launch your Orion server (if it's not already running), and reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
-4. Log in to your Orion server, go to the Plugins page, and uninstall ```jslintPlugin.html```.
-5. Paste [http://mamacdon.github.com/outliner/outlinerPlugin.html](http://mamacdon.github.com/outliner/outlinerPlugin.html) into the box and click Install.
+Installing into Orion
+---------------------
+1. Log in to Orion, and click the Plugins link on the global toolbar.
+2. Paste [http://mamacdon.github.com/outliner/outlinerPlugin.html](http://mamacdon.github.com/outliner/outlinerPlugin.html) into the text box and click Install.
    After a moment, you should see a success message.
-6. Open a JavaScript file in the Orion editor. You'll see the outline tree in the left-hand pane.
+3. Open a JavaScript file in the Orion editor. You should now see a drop-down menu in the outline pane.
+4. Click the drop-down arrow and choose "Hierarchical outliner".
 
-<!-- The first 3 steps are a workaround for [Orion Bug 355895](https://bugs.eclipse.org/bugs/show_bug.cgi?id=355895). -->
-<!-- 
+<!--
 Installing onto orionhub
 ------------------------
 We can use Orionhub to simulate a local Orion server. We'll install the Outliner plugin into our "simulated" server.
@@ -35,12 +27,12 @@ We can use Orionhub to simulate a local Orion server. We'll install the Outliner
 
 Uninstalling
 ------------
-1. Open ```defaults.pref``` and uncomment the jslintPlugin line.
+1. Log in to Orion and click the Plugins link on the global toolbar.
 2. Uninstall ```outlinerPlugin.html```.
 
 Requirements
 ------------
-* Orion 0.3 pre-M2 (any build newer than 08/28 will work)
+* Orion 0.3 pre-M2 (a build newer than 09-16-2011 is recommended)
 
 License
 -------
