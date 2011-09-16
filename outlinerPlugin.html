@@ -32,7 +32,8 @@ require(["jsoutliner"], function(mJsOutline) {
 		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
 			mJsOutline.outlineService,
 			{	name: "Hierarchical outline",
-				pattern: "\\.js$"
+				pattern: "\\.js$",
+				id: "com.github.mamacdon.outliner"
 			});
 		
 		// parse-js validation is not currently used since its errors are less helpful than jslint's
