@@ -245,6 +245,28 @@ function otherArgAlsoFunction() {
 </pre>
 </td>
 </tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="dotty">
+  var x = {fox: { bax: function(){} } };	//  fox.bax
+  foo.foo.foo = function(){};
+  var z = {
+    foz: function() {
+      var baz = function() {
+        var y = {bay: function() {}};  // foz/baz/bay
+      };
+    }
+  };
+  var outer = function() {
+    x.fox.bax.nx = function(){};
+    var w = {fow: { baw: function(){} } };	//  outer/fow.baw
+  };
+</pre>
+</td>
+</tr>
 </tbody>
 </table>
 </div>
