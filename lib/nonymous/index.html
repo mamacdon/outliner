@@ -288,6 +288,32 @@ function otherArgAlsoFunction() {
 </pre>
 </td>
 </tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="named">
+function foo() {
+  return function bar(){
+    return true;
+  }
+}
+orion.textview.TextView = (function() {
+
+	/** @private */
+	function addHandler(node, type, handler, capture) {
+		if (typeof node.addEventListener === "function") {
+			node.addEventListener(type, handler, capture === true);
+		} else {
+			node.attachEvent("on" + type, handler);
+		}
+	}
+}());
+</pre>
+</td>
+</tr>
+
 </tbody>
 </table>
 <br>
