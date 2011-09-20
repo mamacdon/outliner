@@ -6,15 +6,35 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
   var parser = mUglifyJs.parser;
   
   // convert Nonymous output to Orion outline renderer input
+  function toOutlineElement(name, line, col) {
+    var element = {
+      label: name,
+      line: line,
+      column: col,
+      childrenByName: {}
+    };
+    return element;
+  }
+  
+  function toOutlineBranch(elements, elementsByName, levels, line, col) {
+    var level = levels.shift();
+    if (!elementsByName[level]) {
+      elementsByName[level] = toOutlineElement(level, line, col);
+    }
+    if (levels.length) { // then we have children to worry about
+      elementsByName[level].children = elementsByName[level].children || [];
+      toOutlineBranch(elementsByName[level].children, elementsByName[level].childrenByName, levels, line, col);
+    } else { // this level is the end of the name
+      elements.push(elementsByName[level]);
+    }
+  }
+  
   function toOutlineModel(infos) {
     var elements = [];
+    var elementsByName = {}; // branches will arrive before leaves
     infos.forEach(function (info) {
-      var element = {
-        label: info.name,
-        line: info.line,
-        column: info.col,
-      };
-      elements.push(element);
+      var levels = info.name.split('/');
+      toOutlineBranch(elements, elementsByName, levels, info.line, info.col);
     });
     return elements;
   }
