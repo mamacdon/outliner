@@ -3,13 +3,15 @@
 <title>Nonymous: Naming Javascript Functions with the Function-Object Consumption Algorithm </title>
 <script type="text/javascript">
 var loadAndTest = {
-        
+  
+  overrides: {},
+  
   getNameInfosFromSource: function(src) {
     // We parse the JavaScript ...
     var ast = exports.parse(src, false, ".loc");
     
     // and search the resulting syntax tree for function body nodes.
-    var infos = Nonymous.getNames(ast, true);
+    var infos = Nonymous.getNames(ast, true, loadAndTest.overrides);
     return infos;
   },
   
@@ -61,28 +63,44 @@ var loadAndTest = {
     var aScript = input.textContent;
     return this.reportNames(input.id, input.textContent);
   },
-};
-
-var exports = {};
-
-window.addEventListener('load', function testAll() {
+  
+  hookAll: function() {
     function analyzer(input, output) {
       return function(event) {
         output.textContent = loadAndTest.analyzeOne(input);  
       }
     }
 
-  var outputs = document.getElementsByClassName('output');
-  var inputs = document.getElementsByClassName('input');
-  for(var i = 0; i < inputs.length; i++) {
-    var input = inputs[i];
-    var output = outputs[i];
-    var analyzeRow = analyzer(input, output);
-    input.addEventListener('click', analyzeRow, true);
-    analyzeRow();
-  }
+    var outputs = document.getElementsByClassName('output');
+    var inputs = document.getElementsByClassName('input');
+    for(var i = 0; i < inputs.length; i++) {
+      var input = inputs[i];
+      var output = outputs[i];
+      var analyzeRow = analyzer(input, output);
+      input.addEventListener('click', analyzeRow, true);
+    }
+  },
 
-}, false);
+  testAll: function() {
+    var inputs = document.getElementsByClassName('input');
+    for(var i = 0; i < inputs.length; i++) {
+      var input = inputs[i];
+      var e = document.createEvent('MouseEvents');
+      e.initEvent('click', true, true);
+      input.dispatchEvent(e);
+    }
+  },
+
+};
+
+var exports = {};
+
+
+function hookAndTestAll() {
+  loadAndTest.hookAll();
+  loadAndTest.testAll();
+}
+window.addEventListener('load', hookAndTestAll, false);
 
 function require(module) {
   if (!window.module)
@@ -109,13 +127,16 @@ table, th, td {
 </style>
 </head>
 <body>
-<h1>Nonymous: Function-Object Consumption Naming algorithm implementation</h1>
-<p>
-Splash Wavefront 2011 Paper:
+<h1>Nonymous: Function-Object Consumption Naming Algorithm Implementation</h1>
+<p>Demo/test page for a proposed way of automatically naming anonymous functions for editors, debuggers, and other tools</p>  
+<ul>
+<li>Splash Wavefront 2011 Paper:
 <a href="http://code.google.com/p/querypoint-debugging/downloads/detail?name=NamingJSFunctions.pdf">
 Naming Anonymous JavaScript Functions
-</a>, by Salman Mirghasemi,  John J. Barton, and Prof. Claude Petitpierre
-</p>
+</a>, by Salman Mirghasemi,  John J. Barton, and Prof. Claude Petitpierre</li>
+<li><a href="https://github.com/johnjbarton/outliner">Orion Editor Plugin Implementation</a>
+</ul>
+
 <table>
 <tbody>
 <tr><th>Naming Algorithm Results</th><th>Input Source</th></tr>
@@ -269,6 +290,36 @@ function otherArgAlsoFunction() {
 </tr>
 </tbody>
 </table>
-</div>
+<br>
+<table id='markers'>
+<caption>Try out different naming marker options:</caption>
+<tbody>
+<tr><th>Marker</th><th>Role</th></tr>
+<tr><td><input id='isPartOfSep' type='text' size='3' value='.'/></td><td>Name component is a property</td></tr>
+<tr><td><input id='isContributesToSep' type='text' size='3' value='<'/></td><td>Function contributes to the name component</td></tr>
+<tr><td><input id='isInArgSummarySep' type='text' size='3' value='^'/></td><td>Function's location within an argument summary</td></tr>
+<tr><td><input id='isScopedSep' type='text' size='3' value='/'/></td><td>Scope separator</td></tr>
+<tr><td><input id='isProperySep' type='text' size='3' value='.'/></td><td>Name is enclosed in a property</td></tr>
+<tr><td><input id='argSummaryClip' type='text' size='3' value='15'/></td><td>The max number of characters used in an argument summary</td></tr>
+</tbody>
+</table>
+<script type="text/javascript">
+function override(event) {
+  var property = event.target.getAttribute('id');
+  var value = event.target.value;
+  if (value && Nonymous[property]) {
+    if (typeof Nonymous[property] === 'number') {
+      value = parseInt(value);
+    }
+    loadAndTest.overrides[property] = value;
+    loadAndTest.testAll();
+  }
+}
+function hookInputs() {
+  var markers = document.getElementById('markers');
+  markers.addEventListener('keyup', override, true);
+}
+window.addEventListener('load', hookInputs, false);
+</script>
 </body>
 </html>
