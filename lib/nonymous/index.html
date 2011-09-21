@@ -7,6 +7,7 @@ var loadAndTest = {
   overrides: {},
   
   getNameInfosFromSource: function(src) {
+  
     // We parse the JavaScript ...
     var ast = exports.parse(src, false, ".loc");
     
@@ -51,10 +52,21 @@ var loadAndTest = {
     console.log("testOne "+url, src);
     var srcLines = src.split('\n');
     var output = new Array(srcLines.length);
-    var infos = loadAndTest.getNameInfosFromSource(src);
-    for (var i = 0; i < infos.length; i++) {
-      var info = infos[i];
-      output[info.line] = info.name;
+    try {
+      var infos = loadAndTest.getNameInfosFromSource(src);
+      for (var i = 0; i < infos.length; i++) {
+        var info = infos[i];
+        output[info.line] = info.name;
+      }
+    } catch (exc) {
+      output[0] = exc.toString().substr(0,37);
+      if (exc.stack) {
+        var stack = exc.stack.split('\n');
+        var maxLines = Math.min(output.length - 1, stack.length);
+        for (var i = 0; i < maxLines; i++) {
+          output[i+1] = stack[i].toString().substr(0,35);
+        }
+      }
     }
     return output.join('\n');
   },
@@ -313,8 +325,220 @@ orion.textview.TextView = (function() {
 </pre>
 </td>
 </tr>
-
-</tbody>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case2">
+// Case 2: Entry in an Array Literal
+var fromYUI = {
+  _attach:function(el, notifier, delegate) {
+    if(Y.DOM.isWindow(el)){
+      return Event.attach([type, function(e){
+        notifier.fire(e);
+      },el]);
+    }
+  }
+};
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case3">
+// Case 3: Property assignment with property identifier
+  this.eventPool_.createObject = function() {
+    return new goog.debug.Trace_.Event_();
+  };
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case4">
+// Case 4: Property assignment with property name string
+  this.eventPool_["createObject"] = function() {
+    return new goog.debug.Trace_.Event_();
+  };
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case5">
+// Case 5: Property Assignment With  Property Name Variable
+  jQuery.each("ajaxStart ajaxStop ajaxComplete ajaxError"
+    .split(" "), function( i, o ) {
+       jQuery.fn[o] = function( f ) {
+         return this.bind(o, f);
+       };
+  });
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case6">
+// Case 6:  Property Assignment With  Property Name Expressions
+  function define(D) {
+    if (!element) element = getRootElement();
+    property[D] = 'client' + D;
+    viewport['get' + D] = function() { 
+      return element[property[D]] 
+    };
+    return viewport['get' + D]();
+  }
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case7">
+// Case 7: Assignment to an Element of an Array
+var arr = [];
+arr[0] = function() { 
+  return "I'm nothing"; 
+  }
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case8">
+// Case 8: Assignment to a Variable
+var foo;
+foo = function() {
+  return 'metasyntactic';
+  };
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case9">
+// Case 9: Anonymous Functions Immediately Called
+  Y.ClassNameManager = function () {
+    var sPrefix = CONFIG[CLASS_NAME_PREFIX],
+    sDelimiter = CONFIG[CLASS_NAME_DELIMITER];
+    return {
+      getClassName: Y.cached(function () {
+        var args = Y.Array(arguments);
+        if (args[args.length-1] !== true) {
+          args.unshift(sPrefix);
+        } else {
+          args.pop();
+        }
+        return args.join(sDelimiter);
+      })
+    };
+  }();
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case10">
+// Case 10: Function Property is Accessed
+var fromExtJS = {
+  setVisible : function(v, a, d, c, e){
+    if(v){
+      this.showAction();
+    }
+    if(a && v){
+      var cb = function(){
+        this.sync(true);
+          if(c){
+             c();
+          }
+      }.createDelegate(this);
+    }
+    // .....
+  }
+};
+</pre>
+</td>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case11">
+// Case 11:  Returned From a Function Call
+var fromDojo = {
+  registerWin: function(targetWindow, effectiveNode){
+    if(doc){
+      if(dojo.isIE){
+        return function(){
+          doc.detachEvent('onmousedown', mousedownListener);
+          doc.detachEvent('onactivate', activateListener);
+          doc.detachEvent('ondeactivate', deactivateListener);
+          doc = null;    
+        };
+      }else{
+        return function(){
+          doc.removeEventListener('mousedown', mousedownListener, true);
+          doc.removeEventListener('focus', focusListener, true);
+          doc.removeEventListener('blur', blurListener, true);
+          doc = null;   
+        };
+      }
+    }
+  }
+}
+</pre>
+</td>
+</tr><tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="case12">
+// Case 12: Function Passed as an Argument
+  Y.ClassNameManager = function () {
+    var sPrefix = CONFIG[CLASS_NAME_PREFIX],
+    sDelimiter = CONFIG[CLASS_NAME_DELIMITER];
+    return {
+      getClassName: Y.cached(function () {
+        var args = Y.Array(arguments);
+        if (args[args.length-1] !== true) {
+          args.unshift(sPrefix);
+        } else {
+          args.pop();
+        }
+        return args.join(sDelimiter);
+      })
+    };
+  }();
+</pre>
+</td>
+</tr></tbody>
 </table>
 <br>
 <table id='markers'>
