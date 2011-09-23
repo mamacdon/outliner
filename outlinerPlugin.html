@@ -35,13 +35,6 @@ require(["jsoutliner"], function(mJsOutline) {
 				pattern: "\\.js$",
 				id: "com.github.mamacdon.outliner"
 			});
-		
-		// parse-js validation is not currently used since its errors are less helpful than jslint's
-//		provider.registerServiceProvider("orion.edit.validator",
-//			mJsOutline.validationService,
-//			{	pattern: "\\.js$"
-//			});
-		
 		provider.connect();
 	}
 });
