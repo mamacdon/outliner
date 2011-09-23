@@ -61,7 +61,6 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
 			return toOutlineModel(infos);
 	      } catch (exc) {
 	        console.error("Error getting names from ast "+exc, exc.stack);
-	        // bogus console.exception(exc);
 	        console.error(exc);
 			return [];
 		  }

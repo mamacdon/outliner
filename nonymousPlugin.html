@@ -17,10 +17,12 @@ require({
 	]
 });
 
-require(["nonymousOutliner.js"], function(mNonymousOutliner) {
+require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymousOutliner, UglyWalker) {
 	require.ready(function() {
 		register();
 	});
+	
+	window.UglyWalker = UglyWalker; 
 
     var urlParams = window.location.toString().split('?')[1];
     if (typeof urlParams === 'string') {
