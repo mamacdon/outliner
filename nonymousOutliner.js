@@ -6,15 +6,34 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
   var parser = mUglifyJs.parser;
   
   // convert Nonymous output to Orion outline renderer input
+  function toOutlineElement(name, line, col) {
+    var element = {
+      label: name,
+      line: line,
+      column: col,
+      childrenByName: {}
+    };
+    return element;
+  }
+  
+  function toOutlineBranch(elements, elementsByName, levels, line, col) {
+    var level = levels.shift();
+    if (!elementsByName[level]) {
+      elementsByName[level] = toOutlineElement(level, line, col);
+      elements.push(elementsByName[level]);
+    }
+    if (levels.length) { // then we have children to worry about
+      elementsByName[level].children = elementsByName[level].children || [];
+      toOutlineBranch(elementsByName[level].children, elementsByName[level].childrenByName, levels, line, col);
+    }
+  }
+  
   function toOutlineModel(infos) {
     var elements = [];
+    var elementsByName = {}; // branches will arrive before leaves
     infos.forEach(function (info) {
-      var element = {
-        label: info.name,
-        line: info.line,
-        column: info.col,
-      };
-      elements.push(element);
+      var levels = info.name.split(/[\/\.]/);
+      toOutlineBranch(elements, elementsByName, levels, info.line, info.col);
     });
     return elements;
   }
@@ -22,19 +41,29 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
   var mJsOutline = {};
   mJsOutline.outlineService = {
 	getOutline: function(buffer, title) {
-		var start = +new Date(),
-		    infos,
-		    end;
+		var startTime = +new Date();
+		var ast;
 		try {
-			var ast = parser.parse(buffer, false, true /*give tokens*/);
-			infos = mNonymous.getNames(ast);
-			end = +new Date() - start;
-			console.dir(end);
+			ast = parser.parse(buffer, false, true /*give tokens*/);
 		} catch (e) {
 			console.debug("Error parsing file: " + e);
-			return [/* TODO can we get a partial result, as with jslint? */];
 		}
-		return toOutlineModel(infos);
+		if (ast) {
+		  var parsedTime = +new Date(); 
+		  try {
+			var infos = mNonymous.getNames(ast, mJsOutline.debug);
+			var endTime = +(new Date());
+			var deltaParse = (parsedTime - startTime);
+			var deltaNaming = (endTime - parsedTime);
+			var relative = Math.round( 100 * deltaNaming / (deltaNaming+deltaParse) );
+			console.info("Nonymous: uglify parse: "+deltaParse+"ms, naming: "+deltaNaming+"ms "+ relative+"%");
+			return toOutlineModel(infos);
+	      } catch (exc) {
+	        console.error("Error getting names from ast "+exc, exc.stack);
+	        console.error(exc);
+			return [];
+		  }
+		}
 	}
   };
   return mJsOutline;

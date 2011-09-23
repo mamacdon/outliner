@@ -1,59 +1,43 @@
 <html>
 <head>
-<title>Nonymous: Naming Javascript Functions with the Function-Object Consumption Algorithm </title>
+<title>Test Page for UglyTreeLeafFinder </title>
+
+
 <script type="text/javascript">
 var loadAndTest = {
   
   overrides: {},
   
-  getNameInfosFromSource: function(src) {
+  getLeavesFromSource: function(src, srcLines) {
   
     // We parse the JavaScript ...
     var ast = exports.parse(src, false, ".loc");
     
-    // and search the resulting syntax tree for function body nodes.
-    var infos = Nonymous.getNames(ast, true, loadAndTest.overrides);
-    return infos;
-  },
-  
-  checkNames: function(url, src, infosToCheck) {
-    var infos = loadAndTest.getNameInfosFromSource(src);
-    var pass = 0;
-    var fail = 0;
-    var lesser = (infos.length > infosToCheck.length) ? infosToCheck.length : infos.length;
-    for (var i = 0; i < lesser; i++) {
-      var name = loadAndTest.formName(url, infos[i]);
-      if (name === infosToCheck[i]) {
-        pass++;
-      } else {
-        fail++;
-        console.log(infosToCheck[i]+" !== "+name);
-      }
-    }
-    for (; i < infosToCheck.length; i++) {
-      fail++;
-      console.log("missing "+infosToCheck[i])
-    }
-    if (infos.length > infosToCheck.length) {
-      for (var i = infosToCheck.length; i < infos.length; i++) {
-        fail++;
-        var name = loadAndTest.formName(url, infos[i]);
-        console.log("extra "+name);
-      }
-    }
-    console.log(url+" Pass: "+pass+(fail?" Fail: "+fail:""));
+    var index = 0;
+    var line = 0;
+    var pathsByLines = [];
+    srcLines.forEach(function(line) {
+      UglyTreeLeafFinder.visitPathToIndex(index, ast, function pathByLine(path){
+        pathsByLines.push(path);
+      });      
+      index += line.length;
+      line++;
+    });
+
+    return pathsByLines;
   },
   
   formName: function(url, info) {
     return url+"@"+info.line+"."+info.col+": "+info.name
   },
   
-  reportNames: function(url, src) {
+  reportPath: function(url, src) {
     console.log("testOne "+url, src);
     var srcLines = src.split('\n');
     var output = new Array(srcLines.length);
     try {
-      var infos = loadAndTest.getNameInfosFromSource(src);
+      var infos = loadAndTest.getLeavesFromSource(src, srcLines);
+      
       for (var i = 0; i < infos.length; i++) {
         var info = infos[i];
         output[info.line] = info.name;
@@ -71,15 +55,15 @@ var loadAndTest = {
     return output.join('\n');
   },
   
-  analyzeOne: function(input) {
-    var aScript = input.textContent;
-    return this.reportNames(input.id, input.textContent);
+  findLeaf: function(event, input) {
+    console.log("findLeaf", event);
+    return this.reportPath(input.id, input.textContent);
   },
   
   hookAll: function() {
     function analyzer(input, output) {
       return function(event) {
-        output.textContent = loadAndTest.analyzeOne(input);  
+        output.textContent = loadAndTest.findLeaf(event, input);  
       }
     }
 
@@ -120,18 +104,8 @@ function require(module) {
 }
 </script>
 <script type="text/javascript" src="UglifyJS/lib/parse-js.js"></script>
-<script>
-// hack
-function define(deps, def) {
-  window.UglyWalker = def.call();
-}
-</script>
 <script type="text/javascript" src="UglyWalker.js"></script>
-<script>
-define = null; // unhack
-</script>
-<script type="text/javascript" src="nonymous.js"></script>
-
+<script type="text/javascript" src="UglyTreeLeafFinder.js"></script>
 <style>
 body {
   font-family:Verdana,Geneva,sans-serif;
@@ -149,19 +123,15 @@ table, th, td {
 </style>
 </head>
 <body>
-<h1>Nonymous: Function-Object Consumption Naming Algorithm Implementation</h1>
-<p>Demo/test page for a proposed way of automatically naming anonymous functions for editors, debuggers, and other tools</p>  
+<h1>Test Page</h1>
+<p>Demo/test page for UglyTreeLeafFinder</p>  
 <ul>
-<li>Splash Wavefront 2011 Paper:
-<a href="http://code.google.com/p/querypoint-debugging/downloads/detail?name=NamingJSFunctions.pdf">
-Naming Anonymous JavaScript Functions
-</a>, by Salman Mirghasemi,  John J. Barton, and Prof. Claude Petitpierre</li>
-<li><a href="https://github.com/johnjbarton/outliner">Orion Editor Plugin Implementation</a>
+<li><a href="https://github.com/johnjbarton/outliner/lib/nonymous">github</a>
 </ul>
 
 <table>
 <tbody>
-<tr><th>Naming Algorithm Results</th><th>Input Source</th></tr>
+<tr><th>Finder Results</th><th>Input Source</th></tr>
 <tr>
   <td>
     <pre class="output"></pre>
@@ -551,35 +521,6 @@ var fromDojo = {
 </tr></tbody>
 </table>
 <br>
-<table id='markers'>
-<caption>Try out different naming marker options:</caption>
-<tbody>
-<tr><th>Marker</th><th>Role</th></tr>
-<tr><td><input id='isPartOfSep' type='text' size='3' value='.'/></td><td>Name component is a property</td></tr>
-<tr><td><input id='isContributesToSep' type='text' size='3' value='<'/></td><td>Function contributes to the name component</td></tr>
-<tr><td><input id='isInArgSummarySep' type='text' size='3' value='^'/></td><td>Function's location within an argument summary</td></tr>
-<tr><td><input id='isScopedSep' type='text' size='3' value='/'/></td><td>Scope separator</td></tr>
-<tr><td><input id='isProperySep' type='text' size='3' value='.'/></td><td>Name is enclosed in a property</td></tr>
-<tr><td><input id='argSummaryClip' type='text' size='3' value='15'/></td><td>The max number of characters used in an argument summary</td></tr>
-</tbody>
-</table>
-<script type="text/javascript">
-function override(event) {
-  var property = event.target.getAttribute('id');
-  var value = event.target.value;
-  if (value && Nonymous[property]) {
-    if (typeof Nonymous[property] === 'number') {
-      value = parseInt(value);
-    }
-    loadAndTest.overrides[property] = value;
-    loadAndTest.testAll();
-  }
-}
-function hookInputs() {
-  var markers = document.getElementById('markers');
-  markers.addEventListener('keyup', override, true);
-}
-window.addEventListener('load', hookInputs, false);
-</script>
+
 </body>
 </html>
