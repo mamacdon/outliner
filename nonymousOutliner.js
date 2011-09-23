@@ -20,12 +20,11 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
     var level = levels.shift();
     if (!elementsByName[level]) {
       elementsByName[level] = toOutlineElement(level, line, col);
+      elements.push(elementsByName[level]);
     }
     if (levels.length) { // then we have children to worry about
       elementsByName[level].children = elementsByName[level].children || [];
       toOutlineBranch(elementsByName[level].children, elementsByName[level].childrenByName, levels, line, col);
-    } else { // this level is the end of the name
-      elements.push(elementsByName[level]);
     }
   }
   
@@ -33,7 +32,7 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
     var elements = [];
     var elementsByName = {}; // branches will arrive before leaves
     infos.forEach(function (info) {
-      var levels = info.name.split('/');
+      var levels = info.name.split(/[\/\.]/);
       toOutlineBranch(elements, elementsByName, levels, info.line, info.col);
     });
     return elements;
