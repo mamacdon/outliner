@@ -102,6 +102,45 @@ var loadAndTest = {
       input.dispatchEvent(e);
     }
   },
+  
+  onClickLineNumber: function(src, event) {
+    var lineNo = parseInt(event.target.innerHTML);
+    console.log("lineNo: "+lineNo+" parent: "+event.target.parentElement);
+    // We parse the JavaScript ...
+    var ast = exports.parse(src, false, true);
+    UglyTreeLeafFinder.visitPathToLine(lineNo, 1, ast, function pathByLine(path){});
+
+    // and search the resulting syntax tree for function body nodes.
+    var infos = Nonymous.getNames(ast, true, loadAndTest.overrides);
+    
+  },
+  
+  getLineNumbers: function(src) {
+    var td = document.createElement('td');
+    td.classList.add('lineNumbers');
+      
+    // the last line has no characters
+    var numLines = src.split('\n').length - 1;
+    for (var i = 0; i < numLines; i++) {
+      var div = document.createElement('div');
+      div.innerHTML = i + 1 + "";
+      td.appendChild(div);
+    }
+    td.addEventListener('click', this.onClickLineNumber.bind(this, src), true);
+    return td;
+  },
+  
+  addLineNumbers: function() {
+    var inputs = document.getElementsByClassName('input');
+    for(var i = 0; i < inputs.length; i++) {
+      var input = inputs[i];
+      var src = input.textContent;
+      var srcLines = src.split('\n');
+      var lineNumbers = this.getLineNumbers(src);
+      var td = input.parentElement;
+      td.parentElement.insertBefore(lineNumbers, td);
+    }
+  },
 
 };
 
@@ -109,6 +148,7 @@ var exports = {};
 
 
 function hookAndTestAll() {
+  loadAndTest.addLineNumbers();
   loadAndTest.hookAll();
   loadAndTest.testAll();
 }
@@ -131,6 +171,7 @@ function define(deps, def) {
 define = null; // unhack
 </script>
 <script type="text/javascript" src="nonymous.js"></script>
+<script type="text/javascript" src="UglyTreeLeafFinder.js"></script>
 
 <style>
 body {
@@ -145,6 +186,18 @@ table, th, td {
 }
 .output {
   text-align: right;
+}
+.lineNumbers {
+  font-family: monospace;
+  cursor: pointer;
+}
+td.lineNumbers {
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.lineNumbers div {
+  padding-right: 7px;
+  padding-left: 7px;
 }
 </style>
 </head>
@@ -161,7 +214,7 @@ Naming Anonymous JavaScript Functions
 
 <table>
 <tbody>
-<tr><th>Naming Algorithm Results</th><th>Input Source</th></tr>
+<tr><th>Naming Algorithm Results</th><th colspan='2'>Input Source</th></tr>
 <tr>
   <td>
     <pre class="output"></pre>

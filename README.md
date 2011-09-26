@@ -1,24 +1,42 @@
-Outliner is an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to
-build an abstract syntax tree of your JavaScript code, then constructs a tree of your functions. A few
-simple heuristics are used to infer the names of anonymous functions.
-
-Installing onto your local Orion server
----------------------------------------
-1.  Clone the outliner repo from Github.
-2.  Host the outliner code on a web server somewhere. For bonus points, you can [host it right from your Orion workspace](http://wiki.eclipse.org/Orion/How_Tos/Setup_Orion_Client_Hosted_Site_on_OrionHub).
-3.  Open the file ``` org.eclipse.orion.client.core/web/defaults.pref``` and comment out this line:
-
-        "/plugins/jslintPlugin.html":true,
-    Then reload http://localhost:8080/defaults.pref in your browser to make sure it's not cached.
-
-    (This is a workaround for [Orion Bug 355895](https://bugs.eclipse.org/bugs/show_bug.cgi?id=355895).)
-4. Log in to Orion, go to the Plugins page, and uninstall ```jslintPlugin.html```.
-5. Paste the URL where you're hosting ```newoutlinePlugin.html``` into the box and click Install.
-   You should see a success message.
-6. Open a JavaScript file in the Orion editor. You'll see the outline tree in the left-hand pane.
-
-To uninstall, uncomment the line from Step 3, and uninstall the plugin from Step 5.
+Nonymous Outliner provides an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to build
+an abstract syntax tree of your JavaScript code, then constructs a hierarchical visualization of your functions.
+The names are created using the "Function-Object Consumption" algorithm described in the
+Splash Wavefront 2011 Paper: Naming Anonymous JavaScript Functions , by Salman Mirghasemi, John J. Barton, and Prof. Claude Petitpierre
 
 Requirements
----------------------------------------
-* Orion 0.3 pre-M2 (any build newer than 08/28 will work)
+------------
+* Orion 0.3 pre-M2 (a build newer than 09-16-2011 is recommended)
+* Please note: as of Sept. 25 orionhub.org is not running 0.3, so this plugin will not work there yet.
+
+
+Installing into Orion
+---------------------
+1. Log in to Orion, and click the Plugins link on the global toolbar.
+2. Paste [http://johnjbarton.github.com/outliner/nonymousPlugin.html](http://johnjbarton.github.com/outliner/nonymousPlugin.html) into the text box and click Install.
+   After a moment, you should see a success message.
+3. Open a JavaScript file in the Orion editor. You should now see a drop-down menu in the outline pane.
+4. Click the drop-down arrow and choose "Hierarchical outliner".
+
+<!--
+Installing onto orionhub
+------------------------
+We can use Orionhub to simulate a local Orion server. We'll install the Outliner plugin into our "simulated" server.
+1. Log into Orionhub.
+2. Go to the Repositories page and clone the Orion client repository:
+        git://git.eclipse.org/gitroot/orion/org.eclipse.orion.client.git
+3. Go to the Sites page and create a new site configuration.
+4. *While holding the SHIFT key*, click the Add button and choose ```org.eclipse.orion.client``` from the list.
+   This should create a number of entries in the table.
+5. Click *Start* to launch the site. Note the URL where the site is running; this is now your "local server".
+6. Go to the Navigator and browse to ```org.eclipse.orion.client/bundles/org.eclipse.orion.client.core/web```.
+7. Follow the instructions in "Installing" above, starting from Step 2.
+-->
+
+Uninstalling
+------------
+1. Log in to Orion and click the Plugins link on the global toolbar.
+2. Uninstall ```nonymousPlugin.html```.
+
+License
+-------
+Google BSD, see license.txt.

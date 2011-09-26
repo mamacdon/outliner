@@ -52,12 +52,15 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
 		  var parsedTime = +new Date(); 
 		  try {
 			var infos = mNonymous.getNames(ast, mJsOutline.debug);
-			var endTime = +(new Date());
+			var endNaming = +(new Date());
 			var deltaParse = (parsedTime - startTime);
-			var deltaNaming = (endTime - parsedTime);
+			var deltaNaming = (endNaming - parsedTime);
 			var relative = Math.round( 100 * deltaNaming / (deltaNaming+deltaParse) );
-			console.info("Nonymous: uglify parse: "+deltaParse+"ms, naming: "+deltaNaming+"ms "+ relative+"%");
-			return toOutlineModel(infos);
+			var outline = toOutlineModel(infos);
+			var endOutline = +(new Date());
+			var deltaOutline = (endOutline - endNaming);
+			console.info("Nonymous: uglify parse: "+deltaParse+"ms, naming: "+deltaNaming+"ms "+ relative+"% outline: "+deltaOutline+"ms");
+			return outline;
 	      } catch (exc) {
 	        console.error("Error getting names from ast "+exc, exc.stack);
 	        console.error(exc);
