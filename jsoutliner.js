@@ -170,7 +170,7 @@ mJsOutline.outlineService = {
 			var ast = parser.parse(buffer, false, true /*give tokens*/);
 			tree = toFunctionTree(ast);
 			end = +new Date() - start;
-			console.dir(end);
+			//console.dir(end);
 		} catch (e) {
 			console.debug("Error parsing file: " + e);
 			return [/* TODO can we get a partial result, as with jslint? */];

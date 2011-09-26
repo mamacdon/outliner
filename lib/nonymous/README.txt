@@ -12,6 +12,10 @@ The result is an array of {name: string, line: number, col: number}.
 
 //----------------------------------------------------------------------------------
 
+Demo page: http://johnjbarton.github.com/nonymous/index.html
+
+//----------------------------------------------------------------------------------
+
 The subdirectories use fake get submodule:
 http://debuggable.com/posts/git-fake-submodules:4b563ee4-f3cc-4061-967e-0e48cbdd56cb
 
