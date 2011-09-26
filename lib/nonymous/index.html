@@ -105,7 +105,7 @@ var loadAndTest = {
   
   onClickLineNumber: function(src, event) {
     var lineNo = parseInt(event.target.innerHTML);
-    console.log("lineNo: "+lineNo+" parent: "+event.target.parentElement);
+    console.log("lineNo: "+lineNo+" parent: "+event.target.parentNode);
     // We parse the JavaScript ...
     var ast = exports.parse(src, false, true);
     UglyTreeLeafFinder.visitPathToLine(lineNo, 1, ast, function pathByLine(path){});
@@ -137,8 +137,8 @@ var loadAndTest = {
       var src = input.textContent;
       var srcLines = src.split('\n');
       var lineNumbers = this.getLineNumbers(src);
-      var td = input.parentElement;
-      td.parentElement.insertBefore(lineNumbers, td);
+      var td = input.parentNode;
+      td.parentNode.insertBefore(lineNumbers, td);
     }
   },
 
