@@ -1,11 +1,18 @@
-Outliner provides an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to build
+Nonymous Outliner provides an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to build
 an abstract syntax tree of your JavaScript code, then constructs a hierarchical visualization of your functions.
-A few simple heuristics are used to infer the names of anonymous functions.
+The names are created using the "Function-Object Consumption" algorithm described in the
+Splash Wavefront 2011 Paper: Naming Anonymous JavaScript Functions , by Salman Mirghasemi, John J. Barton, and Prof. Claude Petitpierre
+
+Requirements
+------------
+* Orion 0.3 pre-M2 (a build newer than 09-16-2011 is recommended)
+* Please note: as of Sept. 25 orionhub.org is not running 0.3, so this plugin will not work there yet.
+
 
 Installing into Orion
 ---------------------
 1. Log in to Orion, and click the Plugins link on the global toolbar.
-2. Paste [http://mamacdon.github.com/outliner/outlinerPlugin.html](http://mamacdon.github.com/outliner/outlinerPlugin.html) into the text box and click Install.
+2. Paste [http://johnjbarton.github.com/outliner/nonymousPlugin.html](http://johnjbarton.github.com/outliner/nonymousPlugin.html) into the text box and click Install.
    After a moment, you should see a success message.
 3. Open a JavaScript file in the Orion editor. You should now see a drop-down menu in the outline pane.
 4. Click the drop-down arrow and choose "Hierarchical outliner".
@@ -28,12 +35,8 @@ We can use Orionhub to simulate a local Orion server. We'll install the Outliner
 Uninstalling
 ------------
 1. Log in to Orion and click the Plugins link on the global toolbar.
-2. Uninstall ```outlinerPlugin.html```.
-
-Requirements
-------------
-* Orion 0.3 pre-M2 (a build newer than 09-16-2011 is recommended)
+2. Uninstall ```nonymousPlugin.html```.
 
 License
 -------
-[Eclipse Distribution License v 1.0](http://www.eclipse.org/org/documents/edl-v10.html)
+Google BSD, see license.txt.
