@@ -39,23 +39,6 @@ require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymou
 				pattern: "\\.js$"
 			});
 		
-		// parse-js validation is not currently used since its errors are less helpful than jslint's
-//		provider.registerServiceProvider("orion.edit.validator",
-//			mNonymousOutliner.validationService,
-//			{	pattern: "\\.js$"
-//			});
-		
-		// TEMP: Register jslint for validation -- so that this plugin can be used as a drop-in replacement for jslintPlugin
-		provider.registerServiceProvider("orion.edit.validator", {
-			checkSyntax: function(title, contents) {
-				JSLINT(contents, {white: false, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: false, regexp: true, newcap: true, immed: true, strict: false});
-				return JSLINT.data();
-			}
-		}, {
-			pattern: "\\.js$"
-		});
-		// END TEMP
-		
 		provider.connect(
 		  function callback(){
 		    console.log("Nonymous Plugin Connected");
@@ -67,7 +50,6 @@ require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymou
 	}
 });
 </script>
-<script src="lib/jslintworker.js"></script>	<!-- TEMP -->
 </head>
 <body>
 <h1>Nonymous - Orion outliner for JavaScript</h1>
