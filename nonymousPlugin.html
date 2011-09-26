@@ -73,17 +73,9 @@ require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymou
 <h1>Nonymous - Orion outliner for JavaScript</h1>
 <ol>
 <li>This plugin requires Orion 0.3m2 or greater!</li>
-<li>Open the file org.eclipse.orion.client.core/web/defaults.pref and comment out this line:<br>
-<pre>
-"/plugins/jslintPlugin.html":true,
-</pre>
-Then reload <a href="http://localhost:8080/defaults.pref">http://localhost:8080/defaults.pref</a> in your browser to make sure it's not cached.
-
-(This is a workaround for Orion Bug 355895.)
-
-<li>Log in to Orion, go to the Plugins page, and uninstall jslintPlugin.html.</li>
-
+<li>Log in to Orion and go to the Plugins page.</li>
 <li>Paste the URL for this page and click Install. You should see a success message.</li>
+<li>To use this outliner, open the drop-down menu at the top of the outline panel in the Orion editor and select &quot;JavaScript structural outline&quot;</li>
 </ul>
 <p>To enable error logging add "debug=true" to the end of the plugin URL</p>
 <p>To enable full trace debugging add "debug=trace" to the end of the plugin URL</p>
