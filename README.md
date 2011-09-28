@@ -21,6 +21,11 @@ arrow. Use it to select "Nonymous Structural Outline".
 
 Due to a [bug](https://bugs.eclipse.org/bugs/show_bug.cgi?id=359160) you have to reselect the outliner for each file. 
 
+Another demo page shows a number of examples all on one page: 
+[http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html](http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html). 
+No need to install the plugin to see this demo.
+
+
 Installing into Orion
 ---------------------
 1. Log in to Orion, and click the Plugins link on the global toolbar.
