@@ -577,7 +577,8 @@ var fromDojo = {
 }
 </pre>
 </td>
-</tr><tr>
+</tr>
+<tr>
   <td>
     <pre class="output"></pre>
   </td>
@@ -601,7 +602,25 @@ var fromDojo = {
   }();
 </pre>
 </td>
-</tr></tbody>
+</tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="objectArg">
+   jQuery.each({ focus: "focusin", blur: "focusout" }, function( orig, fix ) {
+	    // ...
+		function handler( e ) { 
+			e = jQuery.event.fix( e );
+			e.type = fix;
+			return jQuery.event.trigger( e, null, e.target );
+		}
+	});
+</pre>
+</td>
+</tr>
+</tbody>
 </table>
 <br>
 <table id='markers'>
