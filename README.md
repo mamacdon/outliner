@@ -12,7 +12,7 @@ Demo
 ----
 1. Open the [Demo site](http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1)
 2. You can't and don't have to login; ignore the warning. Click Plugins near the top right corner,
-3. Put "http://blog.johnjbarton.com:8080/file/A/nonymousPlugin.html" in
+3. Put "http://johnjbarton.github.com/outliner/nonymousPlugin.html" in
 the box, Hit "Install". Note this adds the plugin to your web page localStorge, not the server.
 4. Hit the back button to return to http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1
 5. Navigate to a .js file
@@ -27,7 +27,7 @@ Installing into Orion
 2. Paste [http://johnjbarton.github.com/outliner/nonymousPlugin.html](http://johnjbarton.github.com/outliner/nonymousPlugin.html) into the text box and click Install.
    After a moment, you should see a success message.
 3. Open a JavaScript file in the Orion editor. You should now see a drop-down menu in the outline pane.
-4. Click the drop-down arrow and choose "Hierarchical outliner".
+4. Click the drop-down arrow and choose "Nonymous Structural Outline".
 
 <!--
 Installing onto orionhub
