@@ -35,13 +35,13 @@ require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymou
 		var provider = new eclipse.PluginProvider();
 		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
 			mNonymousOutliner.outlineService,
-			{	name: "JavaScript structural outline",
+			{	name: "Nonymous structural outliner",
 				pattern: "\\.js$"
 			});
 		
 		provider.connect(
 		  function callback(){
-		    console.log("Nonymous Plugin Connected");
+		    console.log("Nonymous Plugin Connected, home page: https://github.com/johnjbarton/outliner");
 		  },
 		  function errback() {
 		    console.log("Nonymous Plugin Error: ", arguments);
