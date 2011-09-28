@@ -620,6 +620,32 @@ var fromDojo = {
 </pre>
 </td>
 </tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="blankPropName">
+   var obj = {
+     relative: {
+        "": function(checkSet, part, isXML){
+			var nodeCheck,
+				doneName = done++,
+				checkFn = dirCheck;
+
+			if ( typeof part === "string" && !/\W/.test(part) ) {
+				part = part.toLowerCase();
+				nodeCheck = part;
+				checkFn = dirNodeCheck;
+			}
+
+			checkFn( "parentNode", part, doneName, checkSet, nodeCheck, isXML );
+		}
+	}
+   };
+</pre>
+</td>
+</tr>
 </tbody>
 </table>
 <br>
