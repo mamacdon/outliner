@@ -32,7 +32,7 @@ define(["uglify-js", "lib/nonymous/nonymous.js"], function(mUglifyJs, mNonymous)
     var elements = [];
     var elementsByName = {}; // branches will arrive before leaves
     infos.forEach(function (info) {
-      var levels = info.name.split(/[\/\.]/);
+      var levels = info.hierarchy;
       toOutlineBranch(elements, elementsByName, levels, info.line, info.col);
     });
     return elements;
