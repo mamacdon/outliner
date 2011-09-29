@@ -12,11 +12,8 @@ Demo
 ----
 1. Open the [Demo site](http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1)
 2. You can't and don't have to login; ignore the warning. Click Plugins near the top right corner,
-3. Put "http://johnjbarton.github.com/outliner/nonymousPlugin.html" in
-the box, Hit "Install". Note this adds the plugin to your web page localStorge, not the server.
-4. Hit the back button to return to http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1
-5. Navigate to a .js file
-6. In the tall gray box on the left side you will see a dark gray
+3. Navigate to a .js file
+4. In the tall gray box on the left side you will see a dark gray
 arrow. Use it to select "Nonymous Structural Outline".
 
 Due to a [bug](https://bugs.eclipse.org/bugs/show_bug.cgi?id=359160) you have to reselect the outliner for each file. 
