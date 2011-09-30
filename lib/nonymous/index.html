@@ -662,6 +662,27 @@ var fromDojo = {
 </pre>
 </td>
 </tr>
+<tr>
+  <td>
+    <pre class="output"></pre>
+  </td>
+  <td>
+<pre class="input" id="with">
+  var DOMPLATE = {
+    'DIV': function() { return 'div';},
+    'IMG': function() { return 'img';},
+    };
+  with (DOMPLATE) {
+    DOMPLATE.Editor = domplate(Firebug.BaseEditor,
+    {
+      foo: function() {
+        return DIV()+IMG();
+      }
+    });
+  }
+</pre>
+</td>
+</tr>
 </tbody>
 </table>
 <br>
