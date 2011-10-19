@@ -16,7 +16,10 @@ Demo
 4. In the tall gray box on the left side you will see a dark gray
 arrow. Use it to select "Nonymous Structural Outline".
 
-Due to a [bug](https://bugs.eclipse.org/bugs/show_bug.cgi?id=359160) you have to reselect the outliner for each file. 
+(Due to a [bug](https://bugs.eclipse.org/bugs/show_bug.cgi?id=359160) you have to reselect the outliner for each file. 0
+
+JavaScript Libraries Demo
+-------------------------
 
 Another demo page shows a number of examples all on one page: 
 [http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html](http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html). 
