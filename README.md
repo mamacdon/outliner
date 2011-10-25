@@ -8,8 +8,8 @@ Requirements
 * Orion 0.3M2 (a build newer than 09-16-2011 is recommended)
 * http://orionhub.org is running 0.3M2+ now
 
-Demo
-----
+JavaScript Libraries Demo
+-------------------------
 1. Open the [Demo site](http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1)
 2. You can't and don't have to login; ignore the warning. Click Plugins near the top right corner,
 3. Navigate to a .js file
@@ -18,8 +18,8 @@ arrow. Use it to select "Nonymous Structural Outline".
 
 (Due to a [bug](https://bugs.eclipse.org/bugs/show_bug.cgi?id=359160) you have to reselect the outliner for each file. 0
 
-JavaScript Libraries Demo
--------------------------
+One Page Demo
+-------------
 
 Another demo page shows a number of examples all on one page: 
 [http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html](http://blog.johnjbarton.com:8080/file/B/lib/nonymous/index.html). 
