@@ -11,7 +11,7 @@ Requirements
 JavaScript Libraries Demo
 -------------------------
 1. Open the [Demo site](http://blog.johnjbarton.com:8080/navigate/table.html#/file/D/?depth=1)
-2. You can't and don't have to login; ignore the warning. Click Plugins near the top right corner,
+2. You can't and don't have to login; ignore the warning.
 3. Navigate to a .js file
 4. In the tall gray box on the left side you will see a dark gray
 arrow. Use it to select "Nonymous Structural Outline".
