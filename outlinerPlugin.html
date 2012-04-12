@@ -7,7 +7,7 @@
 
 <script>
 /*jslint browser:true*/
-/*global require*/
+/*global eclipse register require*/
 require({
 	packages: [
 		{	name: "uglify-js",
@@ -32,7 +32,7 @@ require(["jsoutliner"], function(mJsOutline) {
 		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
 			mJsOutline.outlineService,
 			{	name: "Hierarchical outline",
-				pattern: "\\.js$",
+				contentType: ["application/javascript"],
 				id: "com.github.mamacdon.outliner"
 			});
 		provider.connect();
