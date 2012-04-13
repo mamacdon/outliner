@@ -37,7 +37,7 @@ require(["nonymousOutliner.js", "lib/nonymous/UglyWalker.js"], function(mNonymou
 			mNonymousOutliner.outlineService,
 			{	name: "Nonymous JavaScript outliner",
 			    id: "nonymous",
-				pattern: "\\.js$"
+				contentType: ["application/javascript"]
 			});
 		
 		provider.connect(
