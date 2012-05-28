@@ -1,6 +1,6 @@
-Outliner provides an improved outline view for the Orion JavaScript editor. It uses UglifyJS's parser to build
-an abstract syntax tree of your JavaScript code, then constructs a hierarchical visualization of your functions.
-A few simple heuristics are used to infer the names of anonymous functions.
+Outliner provides an improved outline view for the Orion JavaScript editor. It constructs a hierarchical visualization
+of the functions in a JavaScript file. Since many functions in JavaScript code are anonymous, Outliner uses a few simple
+heuristics to infer the names of anonymous functions.
 
 Installing into Orion
 ---------------------
@@ -32,7 +32,7 @@ Uninstalling
 
 Requirements
 ------------
-* Orion 0.3 pre-M2 (a build newer than 09-16-2011 is recommended)
+* Orion 0.5
 
 License
 -------

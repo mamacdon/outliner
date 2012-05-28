@@ -2,43 +2,14 @@
 <html>
 <head>
 <title>JS Outliner</title>
-<script src="lib/plugin.js"></script>
-<script src="lib/require.js"></script>
-
+<script src="lib/requirejs/require.js"></script>
 <script>
-/*jslint browser:true*/
-/*global eclipse register require*/
-require({
-	packages: [
-		{	name: "uglify-js",
-			location: "lib/UglifyJS",
-			main: "uglify-js"
-		},
-		{
-			name: "transformjs",
-			location: "lib/transformjs/lib",
-			main: "transformjs"
-		}
-	]
-});
-
-require(["jsoutliner"], function(mJsOutline) {
-	require.ready(function() {
-		register();
+	/*global require*/
+	require({
+		  baseUrl: './'
 	});
-
-	function register() {
-		var provider = new eclipse.PluginProvider();
-		var serviceProvider = provider.registerServiceProvider("orion.edit.outliner",
-			mJsOutline.outlineService,
-			{	name: "Hierarchical outline",
-				contentType: ["application/javascript"],
-				id: "com.github.mamacdon.outliner"
-			});
-		provider.connect();
-	}
-});
+	require(['outlinerPlugin.js']);
 </script>
 </head>
-<body>New outliner for JavaScript</body>
+<body>Outliner for JavaScript</body>
 </html>

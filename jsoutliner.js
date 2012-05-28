@@ -9,14 +9,13 @@
 
 /*jslint debug:true*/
 /*global console define*/
-define(["uglify-js", "transformjs"], function(mUglifyJs, mTransformJs) {
-var parser = mUglifyJs.parser;
-	
+define(["lib/esprima/esprima"], function(mEsprima) {
+
 var Func = (function() {
 	function Func(node, name) {
 		this.name = this.findName(node);
-		this.args = node && node.args;
-		this.start = node && node.type && node.type.start;
+		this.args = node && node.params;
+		this.loc = node && node.range;
 		this.children = [];
 	}
 	Func.prototype = {
@@ -26,47 +25,59 @@ var Func = (function() {
 		findName: function findName(node) {
 			if (!node) { return null; }
 			if (typeof node === "string") { return node; }
-			if (node.name) { return node.name; }
+			if (node.id) { return node.id.name; }
 			
-			var parent = node.__parent,
-			    pType = parent.type.toString();
-			if (parent.right === node) {
-				switch (pType) {
-					case "decl":
-						// var x = function(){} 
-						return findName(parent.left);
-					case "assign":
-						// foo = function() {}
-						// foo.bar = function(){}
-						// Current algorithm below may be somewhat overzealous. To revert, uncomment this line:
-						//return findName(parent.left);
-						var n = parent.left;
-						if (typeof n === "string" || n.name) { return n.name; }
-						else {
-							var dotStack = [];
-							for (var dt = n.type.toString(); dt === "dot"; n = n.left, dt = n.type.toString()) {
-								dotStack.push(n.right);
-							}
-							if (n.name)  { dotStack.push(n.name); }
-							return dotStack.reverse().join(".");
+			var parent = node.__parent;
+			switch (parent.type) {
+				case "VariableDeclarator":
+					// var x = function(){} 
+					return findName(parent.id);
+				case "AssignmentExpression":
+					// foo = function() {}
+					// foo.bar = function(){}
+					// Current algorithm below may be somewhat overzealous. To revert, uncomment this line:
+					//return findName(parent.left);
+					var n = parent.left;
+					if (n.name) { return n.name; }
+					else {
+						var dotStack = [];
+						for (var dt = n.type; dt === "MemberExpression"; n = n.object, dt = n.type) {
+							dotStack.push(n.property.name);
 						}
-						return null;
-					case "pair":
+						if (n.name) { dotStack.push(n.name); }
+						return dotStack.reverse().join(".");
+					}
+					return null;
+				case null:
+				case undefined:
+					if (parent.value === node) {
 						// { bar: function(){} }		-> bar
 						// {foo: { bar: function(){} } }	-> foo.bar
 						// var foo = {bar: function(){} }	-> foo.bar (bonus!)
 						var objStack = [];
-						var p = parent,
-						    pt = p.type.toString();
-						for (; pt === "pair" || pt === "object"; p = p.__parent, pt = p.type.toString()) {
-							if (pt === "pair") {
-								objStack.push(p.left);
+						var p = parent, ppt = p.__parent.type;
+						// Walk up through the property:value chain, also walk past assignments
+						while (p && ppt) {
+							if (ppt === "ObjectExpression") {
+								objStack.push(p.key.name);
+							} else if (p.type === "AssignmentExpression") {
+								// FIX this YUCK
+								if (p.left.type === 'Identifier') {
+									objStack.push(findName(p.left));
+								} else if (p.left.property) {
+									objStack.push(p.left.property.name + '2');
+									objStack.push(p.left.object.name);
+								}
+							} else {
+								break;
 							}
+							p = p.__parent.__parent;
+							ppt = p.__parent && p.__parent.type;
 						}
-						var topName = p && findName(p.right);
-						if (topName) { objStack.push(topName); }
-						return objStack.reverse().join(".");
-				}
+//						var topName = p && findName(p.id);
+//						if (topName) { objStack.push(topName); }
+//						return objStack.reverse().join(".");
+					}
 			}
 			return null;
 		},
@@ -90,61 +101,101 @@ var Func = (function() {
 	return Func;
 }());
 
-function toFunctionTree(/**Array*/ast) {
-	// Sets the parent pointers of node's children for the next iteration of visit() to see
-	function setParents(node, parentFunc) {
-		// Find node's children using transformjs metamodel
-		var model = mTransformJs.typeMap[node.type.toString()];
-		if (model) {
-			for (var i=0; i < model.length; i+=2) {
-				var name = model[i],
-				    fn = model[i+1],
-				    obj = node[name];
-				if (!obj) {
-					continue;
-				} else if (fn === mTransformJs.NODE) {
-					obj.__parent = node;
-					obj.__parentFunc = parentFunc;
-				} else if (fn === mTransformJs.ARRAY || fn === mTransformJs.DECLS || fn === mTransformJs.PAIRS) {
-					for (var j=0; j < obj.length; j++) {
-						obj[j].__parent = node;
-						obj[j].__parentFunc = parentFunc;
-					}
+/**
+ * @param {EsprimaAstNode} noed
+ * @returns All keys of node that lead to child nodes in the Esprima AST.
+ */
+function childKeys(node) {
+	var k = [];
+	for (var prop in node) {
+		if (node.hasOwnProperty(prop) && prop.charAt(0) !== '_') {
+			k.push(prop);
+		}
+	}
+	return k;
+}
+
+/**
+ * @param {EsprimaAstNode} ast
+ * @param {Function} visitorFunc Signature is function({EsprimaAstNode} node)
+ */
+function visitWith(ast, visitorFunc) {
+	var stack = [ast];
+	while (stack.length) {
+		var node = stack.pop();
+		if (!node || typeof node !== 'object') {
+			continue;
+		}
+//		console.log("Visit " + (node.type || node.name || (node.id && node.id.name)));
+		var keys = childKeys(node);
+		visitorFunc(node);
+		for (var i=keys.length-1; i >= 0; i--) {
+			var key = keys[i], val = node[key];
+			if (val instanceof Array) {
+				for (var j=val.length-1; j >= 0; j--) {
+					stack.push(val[j]);
 				}
+			} else {
+				stack.push(val);
+			}
+		}
+	}
+}
+
+/**
+ * @returns {Func}
+ */
+function toFunctionTree(ast) {
+	function set(node, parentNode, parentFunc) {
+		node.__parent = parentNode;
+		node.__parentFunc = parentFunc;
+	}
+	// Sets the parent pointers of node's children
+	function setParents(node, func) {
+		var keys = childKeys(node);
+		for (var i=0; i < keys.length; i++) {
+			var key = keys[i], val = node[key];
+			if (val instanceof Array) {
+				for (var j=0; j < val.length; j++) {
+					set(val[j], node, func);
+				}
+			} else if (val && typeof val === "object") {
+				set(val, node, func);
 			}
 		}
 	}
 	
 	var toplevel = new Func(null, "toplevel");
-	function visit(node, next) {
-//		console.debug("visit " + (node.name || node.value || node.type.toString()));
+	visitWith(ast, function(node) {
 		var func = node.__parentFunc || toplevel;
-		switch (node.type.toString()) {
-			case "defun":
-			case "function":
+		switch (node.type) {
+			case "FunctionDeclaration":
+			case "FunctionExpression":
 				var newFunc = new Func(node);
 				func.add(newFunc);
 				setParents(node, newFunc);
-				return next();
+				break;
 			default:
 				setParents(node, func);
-				return next();
 		}
-	}
-	mTransformJs.transform(ast, [visit]);
+	});
 	return toplevel;
 }
 
-// Converts Func to the outline model required by Orion outline renderer
+/**
+ * Converts Func to the outline model required by Orion outline renderer
+ * @returns {OutlineModel}
+ */
 function toOutlineModel(/**Func*/ functionTree, isTop) {
-	isTop = typeof isTop === "undefined" ? true : false;
+	function names(a) {
+		return a.name;
+	}
 	var name = functionTree.name || "function",
-	    args = functionTree.args ? functionTree.args.join(", ") : "",
-	    token = functionTree.start;
+	    args = functionTree.args ? functionTree.args.map(names).join(", ") : "",
+	    startOffset = functionTree.loc ? functionTree.loc[0] : -1;
 	var element = {
 		label: name + "(" + args + ")",
-		line: token && (token.line + 1)/*,
-		column: token && token.col*/
+		start: startOffset
 	};
 	if (functionTree.children && functionTree.children.length) {
 		element.children = [];
@@ -159,41 +210,45 @@ function toOutlineModel(/**Func*/ functionTree, isTop) {
 		return element;
 	}
 }
-
-var mJsOutline = {};
-mJsOutline.outlineService = {
-	getOutline: function(buffer, title) {
-		var start = +new Date(),
-		    tree,
-		    end;
-		try {
-			var ast = parser.parse(buffer, false, true /*give tokens*/);
-			tree = toFunctionTree(ast);
-			end = +new Date() - start;
-			//console.dir(end);
-		} catch (e) {
-			console.debug("Error parsing file: " + e);
-			return [/* TODO can we get a partial result, as with jslint? */];
-		}
-		return toOutlineModel(tree);
+ 
+/**
+ * @returns {OutlineModel}
+ */
+function getOutline(buffer, title) {	
+	// TODO fix bug 369442 and remove this line-counting
+	var start = +new Date(),
+	    tree,
+	    end;
+	try {
+		var ast = mEsprima.parse(buffer, {range: true});
+		tree = toFunctionTree(ast);
+		end = +new Date() - start;
+		//console.log(end);
+	} catch (e) {
+		console.debug("Error parsing file: " + e);
+		console.log(e.stack);
+		return [/* TODO can we get a partial result, as with jslint? */];
 	}
-};
+	return toOutlineModel(tree, true);
+}
 
-mJsOutline.validationService = {
-	checkSyntax: function(title, buffer) {
-		var errors = [];
-		try {
-			parser.parse(buffer, true /*strict*/, true /*give tokens*/);
-		} catch (e) {
-			errors.push({
-				reason: e.message,
-				line: e.line + 1,
-				character: e.col
-			});
-		}
-		return { errors: errors };
-	}
-};
+//mJsOutline.validationService = {
+//	checkSyntax: function(title, buffer) {
+//		var errors = [];
+//		try {
+//			parser.parse(buffer, true /*strict*/, true /*give tokens*/);
+//		} catch (e) {
+//			errors.push({
+//				reason: e.message,
+//				line: e.line + 1,
+//				character: e.col
+//			});
+//		}
+//		return { errors: errors };
+//	}
+//};
 
-	return mJsOutline;
+	return {
+		getOutline: getOutline
+	};
 });
